@@ -162,47 +162,126 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
     public void validarDados() {
 
-        //     try {
-       // Paciente pac = new Paciente();
+        try {
+            Paciente pac = new Paciente();
+            // Verificando se um convênio foi selecionado no JComboBox
+            if (!(jcConvenio.getSelectedIndex() == 0)) {
+                //   Obtendo o nome do convênio selecionado pelo usuário
+                String conv = jcConvenio.getSelectedItem().toString();
+                //   Criando objeto ConvenioDAO para buscar o convênio no banco de dados
+                ConvenioDAO convDAO = new ConvenioDAO();
+                //     Buscando o convênio no banco de dados com base no nome selecionado pelo usuário
+                Convenio convenio = convDAO.buscarConvenioFiltro(conv);
+                //      Atribuindo o ID do convênio ao paciente
+                pac.setConvenio(convenio.getIdConvenio());
 
-        // Verificando se um convênio foi selecionado no JComboBox
-        //      if (!(jcConvenio.getSelectedIndex() == 0)) {
-        // Obtendo o nome do convênio selecionado pelo usuário
-        //          String conv = jcConvenio.getSelectedItem().toString();
-        // Criando objeto ConvenioDAO para buscar o convênio no banco de dados
-      //  ConvenioDAO convDAO = new ConvenioDAO();
+                // Atribuindo valores aos atributos do Paciente com base nos campos preenchidos pelo usuário na tela
+                boolean nomeValido = jlNome.getText().matches("[^a-z]");
+                boolean cpfValido = jlCpf.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9][2]");
+                boolean dataValida = jtDataNasc.getText().matches("[0-9]{2}[/][0-9]{2}[/][0-9]{4}");
+                boolean enderecoValido = jtEndereco.getText().matches("[0-9]{3} [^0-9]");
+                boolean telefoneValido = jtTelefone.getText().matches("[(][0-9]{2}[)][0-9]{4,5}[-][0-9]{4}");
+                boolean emailValido = jtEmail1.getText().matches("[\\w+@][\\w]{2,3}[.][\\w]{2,3}");
+                boolean rgValido = jtRG.getText().matches("[0-9]");
 
-        // Buscando o convênio no banco de dados com base no nome selecionado pelo usuário
-        //          Convenio convenio = convDAO.buscarConvenioFiltro(conv);
-        // Atribuindo o ID do convênio ao paciente
-        //         pac.setConvenio(convenio.getIdConvenio());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                if (jtNome.getText().isEmpty()
+                        || jtRG.getText().isEmpty()
+                        || jtCpf.getText().isEmpty()
+                        || jtDataNasc.getText().isEmpty()
+                        || jtEndereco.getText().isEmpty()
+                        || jtTelefone.getText().isEmpty()) {
 
-        // Atribuindo valores aos atributos do Paciente com base nos campos preenchidos pelo usuário na tela
-        boolean nomeValido = jlNome.getText().matches("[^0-9]");
-        boolean cpfValido = jlCpf.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9][2]");
-       // boolean rgValido = 
-                // pac.setEndereco(jtEndereco.getText());
-                //       pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
-                //      pac.setTelefone(jtTelefone.getText());
-                //       pac.setCpf(jtCpf.getText());
-                //       pac.setRg(jtRG.getText());
-                //   } else {
-   //     JOptionPane.showMessageDialog(this,
-   //             "Selecione um produto");
-        //    } // fecha else
+                    JOptionPane.showMessageDialog(rootPane, "Os campos obrigatorio são respectivamente \n"
+                            + "Nome"
+                            + "CPF"
+                            + "RG"
+                            + "Endereço"
+                            + "Telefone"
+                            + "Data de nascimento");
 
-        //  } catch (Exception e) {
-       // JOptionPane.showMessageDialog(this,
-      //              "ERRO! " + e.getMessage());
+                } else {
 
-     //   } finally {
+                    if (nomeValido == true && jtNome.getText().chars().sum() <= 55) {
 
-           
+                        pac.setNome(jtNome.getText());
 
-   //     }
-                
-                
+                        if (cpfValido == true) {
+
+                            pac.setCpf(jtCpf.getText());
+
+                            if (rgValido == true && jtRG.getText().chars().sum() <= 15) {
+
+                                pac.setRg(jtRG.getText());
+
+                                if (enderecoValido == true && jtEndereco.getText().chars().sum() <= 200) {
+
+                                    if (telefoneValido == true && jtTelefone.getText().chars().sum() <= 15) {
+
+                                        pac.setTelefone(jtTelefone.getText());
+
+                                        if (emailValido == true || jtEmail1.getText().isEmpty()) {
+
+                                            pac.setEmail(jtEmail1.getText());
+
+                                            if (dataValida == true) {
+
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+                                                pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
+                                            }
+
+                                        } else {
+
+                                            JOptionPane.showInputDialog(rootPane, "O campo de e-mail é opcional, no entanto, se preenchido,"
+                                                    + " deve conter um endereço de e-mail válido ou, no mínimo, números");
+
+                                        }
+
+                                    } else {
+
+                                        JOptionPane.showInputDialog(rootPane, "Telefone deve conter 15 ou menos numeros");
+
+                                    }
+
+                                } else {
+
+                                    JOptionPane.showInputDialog(rootPane, "Endereço deve conter 200 ou menos letras e letras");
+
+                                }
+
+                            } else {
+
+                                JOptionPane.showInputDialog(rootPane, "RG deve conter 15 ou menos numeros");
+
+                            }
+
+                        } else {
+
+                            JOptionPane.showInputDialog(rootPane, "CPF deve conter 11 numeros");
+
+                        }
+
+                    } else {
+                        JOptionPane.showInputDialog(rootPane, "Nome teve ser menor que 55 letras");
+                    }
+
+                }
+
+                pac.setEndereco(jtEndereco.getText());
+                pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
+                pac.setTelefone(jtTelefone.getText());
+                pac.setCpf(jtCpf.getText());
+                pac.setRg(jtRG.getText());
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Selecione um Convenio");
+            } // fecha else
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "ERRO! " + e.getMessage());
+        } finally {
+        }
     }
 
     private void cadastrar() {
