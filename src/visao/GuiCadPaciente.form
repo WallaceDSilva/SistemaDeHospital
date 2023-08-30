@@ -102,6 +102,12 @@
           </Constraints>
         </Component>
         <Component class="javax.swing.JTextField" name="jtCpf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="xxx.xxx.xxx-xx"/>
+          </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value=""/>
+          </AccessibilityProperties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="140" y="60" width="110" height="30"/>
@@ -109,6 +115,9 @@
           </Constraints>
         </Component>
         <Component class="javax.swing.JTextField" name="jtEndereco">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="xxx xxxx"/>
+          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="140" y="140" width="210" height="30"/>
@@ -176,6 +185,9 @@
           </Constraints>
         </Component>
         <Component class="javax.swing.JTextField" name="jtEmail1">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="nome@dominio.com"/>
+          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="140" y="220" width="210" height="30"/>
@@ -193,6 +205,9 @@
           </Constraints>
         </Component>
         <Component class="javax.swing.JTextField" name="jtRG">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="xxxxxxxxx"/>
+          </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="140" y="100" width="210" height="30"/>

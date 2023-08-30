@@ -73,8 +73,13 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlEndereco.setBounds(40, 140, 60, 30);
         jLayeredPane1.add(jtNome);
         jtNome.setBounds(140, 20, 210, 30);
+
+        jtCpf.setToolTipText("xxx.xxx.xxx-xx");
         jLayeredPane1.add(jtCpf);
         jtCpf.setBounds(140, 60, 110, 30);
+        jtCpf.getAccessibleContext().setAccessibleName("");
+
+        jtEndereco.setToolTipText("xxx xxxx");
         jLayeredPane1.add(jtEndereco);
         jtEndereco.setBounds(140, 140, 210, 30);
 
@@ -101,12 +106,16 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlEmail1.setText("E-mal");
         jLayeredPane1.add(jlEmail1);
         jlEmail1.setBounds(40, 220, 90, 30);
+
+        jtEmail1.setToolTipText("nome@dominio.com");
         jLayeredPane1.add(jtEmail1);
         jtEmail1.setBounds(140, 220, 210, 30);
 
         jlRG.setText("RG");
         jLayeredPane1.add(jlRG);
         jlRG.setBounds(40, 100, 90, 30);
+
+        jtRG.setToolTipText("xxxxxxxxx");
         jLayeredPane1.add(jtRG);
         jtRG.setBounds(140, 100, 210, 30);
 
@@ -160,10 +169,12 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void validarDados() {
+    public Paciente validarDados() {
+
+        Paciente pac = new Paciente();
 
         try {
-            Paciente pac = new Paciente();
+
             // Verificando se um convênio foi selecionado no JComboBox
             if (!(jcConvenio.getSelectedIndex() == 0)) {
                 //   Obtendo o nome do convênio selecionado pelo usuário
@@ -176,13 +187,13 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
                 pac.setConvenio(convenio.getIdConvenio());
 
                 // Atribuindo valores aos atributos do Paciente com base nos campos preenchidos pelo usuário na tela
-                boolean nomeValido = jlNome.getText().matches("[^a-z]");
-                boolean cpfValido = jlCpf.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9][2]");
+                boolean nomeValido = jtNome.getText().matches("[a-z]{1,55}");
+                boolean cpfValido = jtCpf.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
                 boolean dataValida = jtDataNasc.getText().matches("[0-9]{2}[/][0-9]{2}[/][0-9]{4}");
-                boolean enderecoValido = jtEndereco.getText().matches("[0-9]{3} [^0-9]");
-                boolean telefoneValido = jtTelefone.getText().matches("[(][0-9]{2}[)][0-9]{4,5}[-][0-9]{4}");
-                boolean emailValido = jtEmail1.getText().matches("[\\w+@][\\w]{2,3}[.][\\w]{2,3}");
-                boolean rgValido = jtRG.getText().matches("[0-9]");
+                boolean enderecoValido = jtEndereco.getText().matches("[0-9]{3}[ ][\\w]{0,197}");
+                boolean telefoneValido = jtTelefone.getText().matches("[(][0-9]{2}[)][ ][0-9]{4,5}[-][0-9]{4}");
+                boolean emailValido = jtEmail1.getText().matches("\\w+@\\w+\\.\\w{2,3}");
+                boolean rgValido = jtRG.getText().matches("[0-9]{1,15}");
 
                 if (jtNome.getText().isEmpty()
                         || jtRG.getText().isEmpty()
@@ -201,7 +212,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                 } else {
 
-                    if (nomeValido == true && jtNome.getText().chars().sum() <= 55) {
+                    if (nomeValido == true && jtNome.getText().length() <= 55) {
 
                         pac.setNome(jtNome.getText());
 
@@ -209,13 +220,13 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                             pac.setCpf(jtCpf.getText());
 
-                            if (rgValido == true && jtRG.getText().chars().sum() <= 15) {
+                            if (rgValido == true && jtRG.getText().length() <= 15) {
 
                                 pac.setRg(jtRG.getText());
 
-                                if (enderecoValido == true && jtEndereco.getText().chars().sum() <= 200) {
+                                if (enderecoValido == true && jtEndereco.getText().length() <= 200) {
 
-                                    if (telefoneValido == true && jtTelefone.getText().chars().sum() <= 15) {
+                                    if (telefoneValido == true && jtTelefone.getText().length() <= 15) {
 
                                         pac.setTelefone(jtTelefone.getText());
 
@@ -228,6 +239,11 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
                                                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
                                                 pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
+                                                limpar();
+
+                                            } else {
+
+                                                JOptionPane.showInputDialog(rootPane, "O campo data deve apresentar o vormato dd/MM/yyyy");
                                             }
 
                                         } else {
@@ -267,11 +283,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                 }
 
-                pac.setEndereco(jtEndereco.getText());
-                pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
-                pac.setTelefone(jtTelefone.getText());
-                pac.setCpf(jtCpf.getText());
-                pac.setRg(jtRG.getText());
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Selecione um Convenio");
@@ -281,7 +292,9 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this,
                     "ERRO! " + e.getMessage());
         } finally {
+            return pac;
         }
+
     }
 
     private void cadastrar() {
@@ -290,7 +303,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
             // Criando objeto PacienteDAO para cadastrar o paciente no banco de dados
             PacienteDAO pacDAO = new PacienteDAO();
-            pacDAO.cadastrarPaciente(pac);
+            pacDAO.cadastrarPaciente(validarDados());
 
             // Mensagem de sucesso
             JOptionPane.showMessageDialog(this, "Paciente cadastrado com sucesso!");
@@ -346,7 +359,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
     private void jbCadastrar1ActionPerformed(java.awt.event.ActionEvent evt) {
         cadastrar();
-        limpar();
+   
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
