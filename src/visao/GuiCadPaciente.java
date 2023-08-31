@@ -36,7 +36,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlCpf = new javax.swing.JLabel();
         jlEndereco = new javax.swing.JLabel();
         jtNome = new javax.swing.JTextField();
-        jtCpf = new javax.swing.JTextField();
         jtEndereco = new javax.swing.JTextField();
         jlEspecialidade = new javax.swing.JLabel();
         jlDataNasc = new javax.swing.JLabel();
@@ -48,6 +47,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlRG = new javax.swing.JLabel();
         jtRG = new javax.swing.JTextField();
         jcConvenio = new javax.swing.JComboBox<>();
+        jfCPF = new javax.swing.JFormattedTextField();
         jLayeredPane2 = new javax.swing.JLayeredPane();
         jbLimpar = new javax.swing.JButton();
         jbCadastrar1 = new javax.swing.JButton();
@@ -71,14 +71,12 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlEndereco.setText("Endereço");
         jLayeredPane1.add(jlEndereco);
         jlEndereco.setBounds(40, 140, 60, 30);
+
+        jtNome.setText("hgfgdfg");
         jLayeredPane1.add(jtNome);
         jtNome.setBounds(140, 20, 210, 30);
 
-        jtCpf.setToolTipText("xxx.xxx.xxx-xx");
-        jLayeredPane1.add(jtCpf);
-        jtCpf.setBounds(140, 60, 110, 30);
-        jtCpf.getAccessibleContext().setAccessibleName("");
-
+        jtEndereco.setText("213 adsssda");
         jtEndereco.setToolTipText("xxx xxxx");
         jLayeredPane1.add(jtEndereco);
         jtEndereco.setBounds(140, 140, 210, 30);
@@ -91,10 +89,12 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlDataNasc);
         jlDataNasc.setBounds(40, 260, 100, 30);
 
+        jtDataNasc.setText("21/11/2005");
         jtDataNasc.setToolTipText("(dd/mm/aaaa)");
         jLayeredPane1.add(jtDataNasc);
         jtDataNasc.setBounds(140, 260, 210, 30);
 
+        jtTelefone.setText("(32) 3567-1564");
         jtTelefone.setToolTipText("(xx) xxxx-xxxx");
         jLayeredPane1.add(jtTelefone);
         jtTelefone.setBounds(140, 180, 130, 30);
@@ -107,6 +107,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlEmail1);
         jlEmail1.setBounds(40, 220, 90, 30);
 
+        jtEmail1.setText("sadsad@gmail.com");
         jtEmail1.setToolTipText("nome@dominio.com");
         jLayeredPane1.add(jtEmail1);
         jtEmail1.setBounds(140, 220, 210, 30);
@@ -115,12 +116,23 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlRG);
         jlRG.setBounds(40, 100, 90, 30);
 
+        jtRG.setText("3213213");
         jtRG.setToolTipText("xxxxxxxxx");
         jLayeredPane1.add(jtRG);
         jtRG.setBounds(140, 100, 210, 30);
 
         jLayeredPane1.add(jcConvenio);
         jcConvenio.setBounds(140, 300, 150, 30);
+
+        jfCPF.setEditable(false);
+        jfCPF.setBackground(new java.awt.Color(70, 73, 75));
+        try {
+            jfCPF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###.###.###-##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jLayeredPane1.add(jfCPF);
+        jfCPF.setBounds(140, 60, 140, 30);
 
         jLayeredPane2.setBackground(new java.awt.Color(255, 255, 255));
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -169,6 +181,28 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public boolean vereficaUnidade() {
+
+        PacienteDAO dAO = new PacienteDAO();
+        boolean b = false;
+        try {
+
+            b = dAO.buscarCPF(jfCPF.getText());
+
+            if (b == false) {
+
+                JOptionPane.showMessageDialog(rootPane, "Cpf existente no sistema, portanto não e possivel cadastrar");
+
+            }
+
+        } catch (Exception e) {
+
+        }
+
+        return b;
+
+    }
+
     public Paciente validarDados() {
 
         Paciente pac = new Paciente();
@@ -188,16 +222,17 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                 // Atribuindo valores aos atributos do Paciente com base nos campos preenchidos pelo usuário na tela
                 boolean nomeValido = jtNome.getText().matches("[a-z]{1,55}");
-                boolean cpfValido = jtCpf.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
+                boolean cpfValido = jfCPF.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
                 boolean dataValida = jtDataNasc.getText().matches("[0-9]{2}[/][0-9]{2}[/][0-9]{4}");
                 boolean enderecoValido = jtEndereco.getText().matches("[0-9]{3}[ ][\\w]{0,197}");
                 boolean telefoneValido = jtTelefone.getText().matches("[(][0-9]{2}[)][ ][0-9]{4,5}[-][0-9]{4}");
                 boolean emailValido = jtEmail1.getText().matches("\\w+@\\w+\\.\\w{2,3}");
                 boolean rgValido = jtRG.getText().matches("[0-9]{1,15}");
+                boolean cpfUnico = vereficaUnidade();
 
                 if (jtNome.getText().isEmpty()
                         || jtRG.getText().isEmpty()
-                        || jtCpf.getText().isEmpty()
+                        || jfCPF.getText().isEmpty()
                         || jtDataNasc.getText().isEmpty()
                         || jtEndereco.getText().isEmpty()
                         || jtTelefone.getText().isEmpty()) {
@@ -218,59 +253,63 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                         if (cpfValido == true) {
 
-                            pac.setCpf(jtCpf.getText());
+                            if (cpfUnico == true) {
 
-                            if (rgValido == true && jtRG.getText().length() <= 15) {
+                                pac.setCpf(jfCPF.getText().replace(".", "").replace("-", ""));
 
-                                pac.setRg(jtRG.getText());
+                                if (rgValido == true && jtRG.getText().length() <= 15) {
 
-                                if (enderecoValido == true && jtEndereco.getText().length() <= 200) {
+                                    pac.setRg(jtRG.getText());
 
-                                    if (telefoneValido == true && jtTelefone.getText().length() <= 15) {
+                                    if (enderecoValido == true && jtEndereco.getText().length() <= 200) {
 
-                                        pac.setTelefone(jtTelefone.getText());
+                                        pac.setEndereco(jtEndereco.getText());
 
-                                        if (emailValido == true || jtEmail1.getText().isEmpty()) {
+                                        if (telefoneValido == true && jtTelefone.getText().length() <= 15) {
 
-                                            pac.setEmail(jtEmail1.getText());
+                                            pac.setTelefone(jtTelefone.getText());
 
-                                            if (dataValida == true) {
+                                            if (emailValido == true || jtEmail1.getText().isEmpty()) {
 
-                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                pac.setEmail(jtEmail1.getText());
 
-                                                pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
-                                                limpar();
+                                                if (dataValida == true) {
+
+                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+                                                    pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
+                                                    limpar();
+
+                                                } else {
+
+                                                    JOptionPane.showInputDialog(rootPane, "O campo data deve apresentar o vormato dd/MM/yyyy");
+                                                }
 
                                             } else {
 
-                                                JOptionPane.showInputDialog(rootPane, "O campo data deve apresentar o vormato dd/MM/yyyy");
+                                                JOptionPane.showInputDialog(rootPane, "O campo de e-mail é opcional, no entanto, se preenchido,"
+                                                        + " deve conter um endereço de e-mail válido ou, no mínimo, números");
+
                                             }
 
                                         } else {
 
-                                            JOptionPane.showInputDialog(rootPane, "O campo de e-mail é opcional, no entanto, se preenchido,"
-                                                    + " deve conter um endereço de e-mail válido ou, no mínimo, números");
+                                            JOptionPane.showInputDialog(rootPane, "Telefone deve conter 15 ou menos numeros");
 
                                         }
 
                                     } else {
 
-                                        JOptionPane.showInputDialog(rootPane, "Telefone deve conter 15 ou menos numeros");
+                                        JOptionPane.showInputDialog(rootPane, "Endereço deve conter 200 ou menos letras e letras");
 
                                     }
 
                                 } else {
 
-                                    JOptionPane.showInputDialog(rootPane, "Endereço deve conter 200 ou menos letras e letras");
+                                    JOptionPane.showInputDialog(rootPane, "RG deve conter 15 ou menos numeros");
 
                                 }
-
-                            } else {
-
-                                JOptionPane.showInputDialog(rootPane, "RG deve conter 15 ou menos numeros");
-
                             }
-
                         } else {
 
                             JOptionPane.showInputDialog(rootPane, "CPF deve conter 11 numeros");
@@ -289,8 +328,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
             } // fecha else
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "ERRO! " + e.getMessage());
         } finally {
             return pac;
         }
@@ -309,8 +346,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Paciente cadastrado com sucesso!");
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "ERRO! " + e.getMessage());
+
         } // fecha catch
 
     }// fecha método
@@ -318,8 +354,14 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
     //apaga valores dos campos
     private void limpar() {
         jtNome.setText("");
+        jtDataNasc.setText("");
+        jtEmail1.setText("");
+        jtTelefone.setText("");
         jtEndereco.setText("");
-        jtCpf.setText("");
+        jfCPF.setText("");
+        jcConvenio.setSelectedIndex(0);
+        jtRG.setText("");
+
     }// fecha método
 
     // metodo para preencher o combo box com os produtos cadastrados no banco de dados
@@ -359,7 +401,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
     private void jbCadastrar1ActionPerformed(java.awt.event.ActionEvent evt) {
         cadastrar();
-   
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -368,6 +410,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
     private javax.swing.JButton jbCadastrar1;
     private javax.swing.JButton jbLimpar;
     private javax.swing.JComboBox<String> jcConvenio;
+    private javax.swing.JFormattedTextField jfCPF;
     private javax.swing.JLabel jlCpf;
     private javax.swing.JLabel jlDataNasc;
     private javax.swing.JLabel jlEmail1;
@@ -376,7 +419,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jlNome;
     private javax.swing.JLabel jlRG;
     private javax.swing.JLabel jlTelefone;
-    private javax.swing.JTextField jtCpf;
     private javax.swing.JTextField jtDataNasc;
     private javax.swing.JTextField jtEmail1;
     private javax.swing.JTextField jtEndereco;

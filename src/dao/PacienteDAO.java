@@ -176,4 +176,37 @@ public class PacienteDAO {
         }
     }
 
+    public boolean buscarCPF(String cpf) {
+
+        boolean cpfUnico = false;
+
+        String sql = "SELECT * FROM paciente WHERE CPF = ?";
+
+        ResultSet rst;
+        PreparedStatement pst;
+
+        try {
+
+            this.con = this.conexao.getConexao();
+
+            pst = con.prepareStatement(sql);
+
+            pst.setString(1, cpf);
+
+            rst = pst.executeQuery();
+
+            cpfUnico = !rst.next();
+
+        } catch (SQLException e) {
+
+            System.out.println("Erro " + e.getMessage());
+
+        } finally {
+
+            return cpfUnico;
+
+        }
+
+    }
+
 }
