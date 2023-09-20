@@ -31,7 +31,9 @@ public class PacienteDAO {
     }
 
     // método cadastrarPaciente
-    public void cadastrarPaciente(Paciente pac) throws SQLException {
+    public boolean cadastrarPaciente(Paciente pac) throws SQLException {
+
+        boolean valida = false;
 
         try {
 
@@ -55,14 +57,17 @@ public class PacienteDAO {
             // Executando o PreparedStatement
             pst.execute();
 
+            valida = true;
         } catch (SQLException se) {
+            valida = false;
             throw new SQLException("Erro ao inserir dados no Banco de Dados! " + se.getMessage());
         } finally {
 
             // Encerrando as conexões
             con.close();
-
+            return valida;
         } // fecha finally
+
     }// fecha método cadastrarPaciente
 
     // método buscarPaciente com condição

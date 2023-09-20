@@ -71,12 +71,9 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jlEndereco.setText("Endereço");
         jLayeredPane1.add(jlEndereco);
         jlEndereco.setBounds(40, 140, 60, 30);
-
-        jtNome.setText("hgfgdfg");
         jLayeredPane1.add(jtNome);
         jtNome.setBounds(140, 20, 210, 30);
 
-        jtEndereco.setText("213 adsssda");
         jtEndereco.setToolTipText("xxx xxxx");
         jLayeredPane1.add(jtEndereco);
         jtEndereco.setBounds(140, 140, 210, 30);
@@ -89,12 +86,10 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlDataNasc);
         jlDataNasc.setBounds(40, 260, 100, 30);
 
-        jtDataNasc.setText("21/11/2005");
         jtDataNasc.setToolTipText("(dd/mm/aaaa)");
         jLayeredPane1.add(jtDataNasc);
         jtDataNasc.setBounds(140, 260, 210, 30);
 
-        jtTelefone.setText("(32) 3567-1564");
         jtTelefone.setToolTipText("(xx) xxxx-xxxx");
         jLayeredPane1.add(jtTelefone);
         jtTelefone.setBounds(140, 180, 130, 30);
@@ -107,7 +102,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlEmail1);
         jlEmail1.setBounds(40, 220, 90, 30);
 
-        jtEmail1.setText("sadsad@gmail.com");
         jtEmail1.setToolTipText("nome@dominio.com");
         jLayeredPane1.add(jtEmail1);
         jtEmail1.setBounds(140, 220, 210, 30);
@@ -116,7 +110,6 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jlRG);
         jlRG.setBounds(40, 100, 90, 30);
 
-        jtRG.setText("3213213");
         jtRG.setToolTipText("xxxxxxxxx");
         jLayeredPane1.add(jtRG);
         jtRG.setBounds(140, 100, 210, 30);
@@ -124,15 +117,13 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
         jLayeredPane1.add(jcConvenio);
         jcConvenio.setBounds(140, 300, 150, 30);
 
-        jfCPF.setEditable(false);
-        jfCPF.setBackground(new java.awt.Color(70, 73, 75));
         try {
             jfCPF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###.###.###-##")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
         jLayeredPane1.add(jfCPF);
-        jfCPF.setBounds(140, 60, 140, 30);
+        jfCPF.setBounds(140, 60, 160, 30);
 
         jLayeredPane2.setBackground(new java.awt.Color(255, 255, 255));
         jLayeredPane2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -224,26 +215,29 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
                 boolean nomeValido = jtNome.getText().matches("[a-z]{1,55}");
                 boolean cpfValido = jfCPF.getText().matches("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
                 boolean dataValida = jtDataNasc.getText().matches("[0-9]{2}[/][0-9]{2}[/][0-9]{4}");
-                boolean enderecoValido = jtEndereco.getText().matches("[0-9]{3}[ ][\\w]{0,197}");
+                boolean enderecoValido = jtEndereco.getText().matches("[\\w]{0,197}[ ][0-9]{3}");
                 boolean telefoneValido = jtTelefone.getText().matches("[(][0-9]{2}[)][ ][0-9]{4,5}[-][0-9]{4}");
                 boolean emailValido = jtEmail1.getText().matches("\\w+@\\w+\\.\\w{2,3}");
                 boolean rgValido = jtRG.getText().matches("[0-9]{1,15}");
                 boolean cpfUnico = vereficaUnidade();
-
+                String cpfSemMascara = jfCPF.getText().replace(".", "").replace("-", "");
+                
+                
+                
                 if (jtNome.getText().isEmpty()
                         || jtRG.getText().isEmpty()
-                        || jfCPF.getText().isEmpty()
+                        || cpfSemMascara.equals("           ")
                         || jtDataNasc.getText().isEmpty()
                         || jtEndereco.getText().isEmpty()
                         || jtTelefone.getText().isEmpty()) {
 
                     JOptionPane.showMessageDialog(rootPane, "Os campos obrigatorio são respectivamente \n"
-                            + "Nome"
-                            + "CPF"
-                            + "RG"
-                            + "Endereço"
-                            + "Telefone"
-                            + "Data de nascimento");
+                            + " Nome, "
+                            + " CPF, "
+                            + " RG. \n "
+                            + " Endereço, "
+                            + " Telefone, "
+                            + " Data de nascimento.");
 
                 } else {
 
@@ -255,7 +249,7 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
                             if (cpfUnico == true) {
 
-                                pac.setCpf(jfCPF.getText().replace(".", "").replace("-", ""));
+                                pac.setCpf(cpfSemMascara);
 
                                 if (rgValido == true && jtRG.getText().length() <= 15) {
 
@@ -278,46 +272,49 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
                                                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
                                                     pac.setDataNascimento(sdf.parse(jtDataNasc.getText()));
+
                                                     limpar();
+
+                                                    JOptionPane.showMessageDialog(this, "Paciente cadastrado com sucesso!");
 
                                                 } else {
 
-                                                    JOptionPane.showInputDialog(rootPane, "O campo data deve apresentar o vormato dd/MM/yyyy");
+                                                    JOptionPane.showMessageDialog(rootPane, "O campo data deve apresentar o vormato dd/MM/yyyy");
                                                 }
 
                                             } else {
 
-                                                JOptionPane.showInputDialog(rootPane, "O campo de e-mail é opcional, no entanto, se preenchido,"
+                                                JOptionPane.showMessageDialog(rootPane, "O campo de e-mail é opcional, no entanto, se preenchido,"
                                                         + " deve conter um endereço de e-mail válido ou, no mínimo, números");
 
                                             }
 
                                         } else {
 
-                                            JOptionPane.showInputDialog(rootPane, "Telefone deve conter 15 ou menos numeros");
+                                            JOptionPane.showMessageDialog(rootPane, "Telefone deve conter 15 ou menos numeros");
 
                                         }
 
                                     } else {
 
-                                        JOptionPane.showInputDialog(rootPane, "Endereço deve conter 200 ou menos letras e letras");
+                                        JOptionPane.showMessageDialog(rootPane, "Endereço deve conter 200 ou menos ao final após um espaço deve conter o número da casa EX: RuaMarioVd 233");
 
                                     }
 
                                 } else {
 
-                                    JOptionPane.showInputDialog(rootPane, "RG deve conter 15 ou menos numeros");
+                                    JOptionPane.showMessageDialog(rootPane, "RG deve conter 15 ou menos numeros");
 
                                 }
                             }
                         } else {
 
-                            JOptionPane.showInputDialog(rootPane, "CPF deve conter 11 numeros");
+                            JOptionPane.showMessageDialog(rootPane, "CPF deve conter 11 numeros");
 
                         }
 
                     } else {
-                        JOptionPane.showInputDialog(rootPane, "Nome teve ser menor que 55 letras");
+                        JOptionPane.showMessageDialog(rootPane, "Nome teve ser menor que 55 letras");
                     }
 
                 }
@@ -340,10 +337,10 @@ public class GuiCadPaciente extends javax.swing.JInternalFrame {
 
             // Criando objeto PacienteDAO para cadastrar o paciente no banco de dados
             PacienteDAO pacDAO = new PacienteDAO();
-            pacDAO.cadastrarPaciente(validarDados());
 
-            // Mensagem de sucesso
-            JOptionPane.showMessageDialog(this, "Paciente cadastrado com sucesso!");
+            Paciente paciente = validarDados();
+
+            pacDAO.cadastrarPaciente(paciente);
 
         } catch (Exception e) {
 

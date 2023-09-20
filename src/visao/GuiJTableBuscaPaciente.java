@@ -1,6 +1,7 @@
 package visao;
 
 import java.util.ArrayList;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.Paciente;
@@ -95,6 +96,11 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
         jLayeredPane3.add(jlFiltro);
         jlFiltro.setBounds(250, 20, 120, 16);
 
+        jtFiltro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtFiltroActionPerformed(evt);
+            }
+        });
         jtFiltro.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jtFiltroKeyReleased(evt);
@@ -104,6 +110,16 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
         jtFiltro.setBounds(250, 40, 170, 40);
 
         jcomboFiltro.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Código Paciente", "CPF", "Nome Paciente", " " }));
+        jcomboFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcomboFiltroItemStateChanged(evt);
+            }
+        });
+        jcomboFiltro.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jcomboFiltroMouseClicked(evt);
+            }
+        });
         jcomboFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jcomboFiltroActionPerformed(evt);
@@ -199,26 +215,54 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
                 String pesquisa = (String) jcomboFiltro.getSelectedItem();
 
                 //Criando variável que armazenará a consulta.
-                String query;
+                String query = "";
 
                 /* Testando o que o usuário escolheu no JComboBox. Conforme
-                 o que foi escolhido uma determinada consulta será montada. */
-                if (pesquisa.equals("Código Paciente")) {
-                    query = "where ID_PACIENTE = " + jtFiltro.getText() + "";
-                } else if (pesquisa.equals("CPF")) {
-                    query = "where CPF = '" + jtFiltro.getText() + "'";
-                } else {
-                    query = "where NOME like '%" + jtFiltro.getText() + "%'";
+                o que foi escolhido uma determinada consulta será montada. */
+                switch (pesquisa) {
+
+                    case "Código Paciente":
+                        if (jtFiltro.getText().matches("[0-9]{1,100}")) {
+                            query = "WHERE ID_PACIENTE LIKE '%" + jtFiltro.getText() + "%'";
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "Somente numeros no filtro ID");
+                            limparFiltro();
+                        }
+                        break;
+                    case "CPF":
+
+                        if (jtFiltro.getText().matches("[0-9]{1,11}")) {
+                            query = "where CPF like '%" + jtFiltro.getText() + "%'";
+                        } else {
+                            JOptionPane.showMessageDialog(rootPane, "somente numeros no filtro CPF, com no maximo 11 caracters");
+                            limparFiltro();
+                        }
+                        break;
+                    default:
+
+                        if (jtFiltro.getText().matches("[a-z]{1,55}") || jtFiltro.getText().matches("[A-Z]{1,2}[a-z]{1,53}")) {
+                            query = "where NOME like '%" + jtFiltro.getText() + "%'";
+                        } else {
+
+                            JOptionPane.showMessageDialog(rootPane, "somente letras no filtro nome");
+                            limparFiltro();
+                        }
+                        break;
                 }
 
                 ArrayList<Paciente> p = new ArrayList<>();
 
                 /* Buscando um ArrayList conforme o filtro que o usuário
          solicitou. */
-                p = ps.buscarPacienteFiltro(query);
+                if (!query.isEmpty()) {
+                    p = ps.buscarPacienteFiltro(query);
+                    limparTabela();
+
+                } else {
+                    preencherTabela();
+                }
 
                 //Limpando a tabela
-                limparTabela();
 
                 /* For que preenche o modelo de tabela (dtm) buscando 
          dados do ArrayList chamado p. */
@@ -227,7 +271,7 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
                         String.valueOf(p.get(i).getIdPaciente()),
                         p.get(i).getNome(),
                         p.get(i).getCpf(),
-                         p.get(i).getTelefone(),});
+                        p.get(i).getTelefone(),});
 
                 }//fecha for
 
@@ -248,7 +292,9 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
 
 
     private void jbLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbLimparActionPerformed
-        limparTabela();
+
+        limparFiltro();
+
     }//GEN-LAST:event_jbLimparActionPerformed
 
     private void jtFiltroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtFiltroKeyReleased
@@ -263,6 +309,20 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jcomboFiltroActionPerformed
 
+    private void jtFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtFiltroActionPerformed
+
+
+    }//GEN-LAST:event_jtFiltroActionPerformed
+
+    private void jcomboFiltroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jcomboFiltroMouseClicked
+
+
+    }//GEN-LAST:event_jcomboFiltroMouseClicked
+
+    private void jcomboFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcomboFiltroItemStateChanged
+        limparFiltro();
+    }//GEN-LAST:event_jcomboFiltroItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
@@ -276,4 +336,12 @@ public class GuiJTableBuscaPaciente extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jtFiltro;
     private javax.swing.JTable jtablePaciente;
     // End of variables declaration//GEN-END:variables
+
+    public void limparFiltro() {
+
+        jtFiltro.setText("");
+        preencherTabela();
+
+    }
+
 }
